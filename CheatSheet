@@ -1,0 +1,105 @@
+Import & Load Data:
+--------------------------
+import pandas as pd
+
+df = pd.read_csv("file.csv")
+df = pd.read_excel("file.xlsx")
+-------------------------
+Inspect the Dataset
+-----------------------
+df.head()            # first 5 rows
+df.tail()            # last 5 rows
+df.shape             # (rows, columns)
+df.columns           # column names
+df.info()            # data types + null counts
+df.describe()        # summary stats (numeric)
+df.describe(include='all')  # include categorical
+---------------------------------------------------------
+Missing Values
+----------------------------------------------------------
+df.isna().sum()              # count missing per column
+df.dropna()                  # drop rows with ANY nulls
+df.dropna(subset=['col'])    # drop if specific column null
+df.fillna(0)                 # fill all nulls
+df['Age'].fillna(df['Age'].mean(), inplace=True)
+--------------------------------------------------------------------
+Selecting Columns
+------------------------------------------------------------------
+df['col']              # single column (Series)
+df[['col1', 'col2']]   # multiple columns (DataFrame)
+------------------------------------------------------------------
+Filtering Rows
+-----------------------------------------------------------------
+df[df['Age'] > 30]
+
+df[(df['Age'] > 30) & (df['Sex'] == 'male')]
+
+df[df['Sex'].isin(['male', 'female'])]
+
+df[~df['col'].isna()]
+-------------------------------------------------------------------
+Sorting
+-----------------------------------------------------------------
+df.sort_values(by='Age')
+df.sort_values(by='Age', ascending=False)
+df.sort_values(by=['Sex', 'Age'])
+----------------------------------------------------------------
+Creating New Columns
+--------------------------------------------------------------
+df['NewCol'] = df['A'] + df['B']
+
+df['FamilySize'] = df['SibSp'] + df['Parch'] + 1
+------------------------------------------------------------------
+Conditional Column
+---------------------------------------------------------------
+df['IsAdult'] = df['Age'] >= 18
+----------------------------------------------------------
+GroupBy
+-------------------------------------------------------
+df.groupby('Sex')['Survived'].mean() # Basic mean
+df.groupby('Pclass')['Fare'].agg(['mean', 'max', 'min']) # multiple aggregations
+df.groupby(['Sex', 'Pclass'])['Survived'].mean() # Group by multiple columns
+df.groupby('Sex').size() # Count per group
+--------------------------------------------------------------
+Value Counts
+---------------------------------------------------
+df['Sex'].value_counts()
+df['Sex'].value_counts(normalize=True)  # percentage
+----------------------------------------
+Unique Values
+-------------------------------------------------
+df['col'].unique()
+df['col'].nunique()
+---------------------------------------
+Percentages
+---------------------------------------
+df['Survived'].mean() * 100
+---------------------------------------
+Renaming Columns
+------------------------------------
+df.rename(columns={'old': 'new'}, inplace=True)
+----------------------------------------------------------
+Drop Columns
+-----------------------------------------
+df.drop(columns=['col1', 'col2'], inplace=True)
+-----------------------------------------------
+Apply 
+---------------------------
+df['NameLength'] = df['Name'].apply(len)
+-------------------------------
+Datetime conversion 
+----------------------------------
+df['Date'] = pd.to_datetime(df['Date'])
+
+df['Year'] = df['Date'].dt.year
+df['Hour'] = df['Date'].dt.hour
+---------------------------------------------
+Correlation
+----------------------------
+df.corr()
+df.corr()['Survived'].sort_values(ascending=False)
+-------------------------------------------
+Quick Plot
+-----------------------------------
+df.groupby('Sex')['Survived'].mean().plot(kind='bar')
+plt.show()
