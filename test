@@ -1,6 +1,24 @@
-import pandas as pd
+# Step 1
 
-df = pd.read_csv("team13_realestate.csv")
+import pandas as pd # Needed Libraries
+import numpy as np
 
-info = pd.Series(df.info())
-print(info)
+df = pd.read_csv("team13_realestate.csv") # 1. Load the Dataset
+print(df.head())
+
+# 2. Explore the data structure and types
+# Size + Col Names
+print(df.shape)         
+print(df.columns)
+
+# Column types and non-null counts
+print(df.info())
+
+# See the number of non-missing vaules, the mean, standard deviation, smallest value, first quartile, median, third quartile, and largest values
+print("Describe:")
+print(df.describe())
+
+# See how many missing values in each column
+print(df.isna().sum())
+
+#And then for 3. and 4. we'd analyze based on the results here that we get
