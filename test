@@ -1,0 +1,6 @@
+import pandas as pd
+
+df = pd.read_csv("team13_realestate.csv")
+
+info = pd.Series(df.info())
+print(info)
