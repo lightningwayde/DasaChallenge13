@@ -1,0 +1,90 @@
+# Step 1 -- data exploration
+
+# Needed libraries
+import pandas as pd
+import numpy as np
+import sys
+
+# 1. Load the Dataset
+df = pd.read_csv("team13_realestate.csv")
+print(df.head())
+
+# 2. Explore the data structure and types
+# Size + Column Names
+print("\nDataset Shape:", df.shape)
+print("Column Names:", df.columns)
+
+# Column types and non-null counts
+print("\nDataset Info:")
+df.info()
+
+# See the number of non-missing vaules, the mean, standard deviation, smallest value, first quartile, median, third quartile, and largest values
+print("\nDescribe:")
+print(df.describe())
+
+# See how many missing values in each column
+print("\nMissing Values:")
+print(df.isna().sum())
+
+
+# Step 2 -- data cleaning
+
+# Create a copy to preserve original dataset
+df_clean = df.copy()
+
+# Calculate median for square_feet
+sqft_median = df_clean['square_feet'].median()
+
+# Fill missing square_feet values with median
+df_clean['square_feet'].fillna(sqft_median, inplace=True)
+
+# Drop rows where price is missing (price is essential)
+df_clean = df_clean.dropna(subset=['price'])
+
+print("\nAfter Handling Missing Values:")
+df_clean.info()
+
+
+# Make sure there are no impossible values, confirm there aren't any missing values, and that the shape is correct
+
+# Impossible values
+print("\nChecking for Impossible Values:")
+
+print("Price <= 0:", (df_clean['price'] <= 0).sum())
+print("Square Feet <= 0:", (df_clean['square_feet'] <= 0).sum())
+print("Negative Age:", (df_clean['age_years'] < 0).sum())
+print("Days on Market <= 0:", (df_clean['days_on_market'] <= 0).sum())
+
+# Remove the impossible values if they exist
+df_clean = df_clean[df_clean['price'] > 0]
+df_clean = df_clean[df_clean['square_feet'] > 0]
+df_clean = df_clean[df_clean['age_years'] >= 0]
+df_clean = df_clean[df_clean['days_on_market'] > 0]
+
+print("\nDataset Shape After Removing Impossible Values:", df_clean.shape)
+
+# Detect Outliers
+Q1 = df_clean['price'].quantile(0.25)
+Q3 = df_clean['price'].quantile(0.75)
+IQR = Q3 - Q1
+
+lower_bound = Q1 - 1.5 * IQR
+upper_bound = Q3 + 1.5 * IQR
+
+outliers = df_clean[
+    (df_clean['price'] < lower_bound) |
+    (df_clean['price'] > upper_bound)
+]
+
+print("\nNumber of Price Outliers Detected:", len(outliers))
+
+# We're detecting outliers but not removing them since they apply in real-life real estate
+
+# Confirming it works
+print("\nFinal Cleaned Dataset Info:")
+df_clean.info()
+
+print("\nFinal Cleaned Dataset Shape:", df_clean.shape)
+
+print("\nFinal Summary Statistics:")
+print(df_clean.describe())
